@@ -89,8 +89,8 @@ class PyRelValsThread(object):
       else:
         time.sleep(5)
     for t in threads: t.join()
-    ret, out = getstatusoutput("touch "+basedir+"/done."+self.jobid)
-    logger.updateRelValMatrixPartialLogs(basedir, "done."+self.jobid)
+    ret, out = getstatusoutput("touch "+self.basedir+"/done."+self.jobid)
+    logger.updateRelValMatrixPartialLogs(self.basedir, "done."+self.jobid)
     self.update_runall()
     self.parseLog()
     return
