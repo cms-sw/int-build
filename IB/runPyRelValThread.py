@@ -104,7 +104,7 @@ class PyRelValsThread(object):
     for logFile in glob.glob(self.basedir+'/*/workflow.log'):
       inFile = open(logFile)
       for line in inFile:
-        if re.match(".* tests passed, .*",line):
+        if re.match("^\s*(\d+\s+)+tests passed,\s+(\d+\s+)+failed\s*$",line):
           res = line.strip().split(" tests passed, ")
           res[0] = res[0].split()
           res[1]=res[1].replace(" failed","").split()
