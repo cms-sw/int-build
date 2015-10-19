@@ -125,9 +125,29 @@ class PyRelValsThread(object):
     outFile.write(" ".join(str(x) for x in status_ok)+" tests passed, "+" ".join(str(x) for x in status_err)+" failed\n")
     outFile.close()
 
+  def update_wftime(self):
+    time_info = {}
+    logRE = re.compile('^.*/([1-9][0-9]*\.[0-9]+)_[^/]+/time\.log$')
+    for logFile in glob.glob(self.basedir+'/*/time.log'):
+      m = logRE.match(logFile)
+      if not m: continue
+      wf = m.group(1)
+      inFile = open(logFile)
+      line  = inFile.readline().strip()
+      inFile.close()
+      try:
+        m = re.match("^(\d+)\.\d+$",line)
+        if m: time_info[wf]=int(m.group(1))
+      except:
+        pass
+    outFile = open(os.path.join(self.basedir,"relval-times.json"),"w")
+    import json
+    json.dump(time_info, outFile)
+    outFile.close()
+
   def parseLog(self):
     logData = {}
-    logRE = re.compile('^.*/([1-9][0-9]*\.[0-9]+)[^/]+/step([1-9])_.*\.log$')
+    logRE = re.compile('^.*/([1-9][0-9]*\.[0-9]+)_[^/]+/step([1-9])_.*\.log$')
     max_steps = 0
     for logFile in glob.glob(self.basedir+'/[1-9]*/step[0-9]*.log'):
       m = logRE.match(logFile)
