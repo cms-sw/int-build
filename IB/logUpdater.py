@@ -176,40 +176,29 @@ class LogUpdater(BuilderBase):
         if not self.doCopy: return
 	tgtDir = tgtDirIn
 
-        if not os.path.exists(tgtDir) and not self.dryRun:
-            try:
-                if not 'slc7_amd64' in tgtDir:
-                  os.makedirs(tgtDir)
-            except:
-                print "ERROR: could not create tgtDir for logs: "+tgtDir
-                pass
+        #if not os.path.exists(tgtDir) and not self.dryRun:
+        #    try:
+        #        if not 'slc7_amd64' in tgtDir:
+        #          os.makedirs(tgtDir)
+        #    except:
+        #        print "ERROR: could not create tgtDir for logs: "+tgtDir
+        #        pass
 
-        import stat
-	if not fromDir:
+        if not fromDir:
 	    fromDir = self.buildDir
 	
 	fromDir = os.path.join(fromDir, self.release, logSubDir)
         fromFile = os.path.join(fromDir, what)
-        logSize = -1
-        if '*' not in fromFile: # don't try this for wildcards
-            try:
-                info = os.stat(fromFile)
-                logSize = info[stat.ST_SIZE]
-            except Exception, e:
-                print "WARNING: could not stat logFile "+fromFile+' got:'+str(e)
-                print "         probably a wildcard, ignoring erroor ... "
-                pass        # do nothing here, probably it was a wildcard.
-            
-        cmd = "cp -r "+fromFile+' '+tgtDir+'/.'
-        if useTar:
-            cmd = "cd "+fromDir+"; tar cf - "+what+' | (cd '+tgtDir+'; tar xf - ) '
+        #cmd = "cp -r "+fromFile+' '+tgtDir+'/.'
+        #if useTar:
+        #    cmd = "cd "+fromDir+"; tar cf - "+what+' | (cd '+tgtDir+'; tar xf - ) '
 
-        try:
-            if not 'slc7_amd64' in tgtDir:
-              self.doCmd(cmd)
-        except Exception, e:
-            print "Ignoring exception during copyLogs:", str(e)
-            pass
+        #try:
+        #    if not 'slc7_amd64' in tgtDir:
+        #      self.doCmd(cmd)
+        #except Exception, e:
+        #    print "Ignoring exception during copyLogs:", str(e)
+        #    pass
 
         tgtDir = tgtDir.replace("/afs/cern.ch/cms/sw/ReleaseCandidates/","")
         ssh_opt="-o CheckHostIP=no -o ConnectTimeout=60 -o ConnectionAttempts=5 -o StrictHostKeyChecking=no -o BatchMode=yes -o PasswordAuthentication=no"
