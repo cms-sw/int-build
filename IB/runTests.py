@@ -163,27 +163,12 @@ class PyRelVals(IBThreadBase):
     
     def run(self):
         IBThreadBase.run(self)
-        experimental = re.match("^slc7_", os.environ["SCRAM_ARCH"]) is not None
-        experimental = True
-        if(experimental): # Enable experimental partial logging
-            from runPyRelValThread import PyRelValsThread
-            pyrelval = PyRelValsThread(8, self.startDir+'/pyRelval')
+        from runPyRelValThread import PyRelValsThread
+        pyrelval = PyRelValsThread(8, self.startDir+'/pyRelval')
         try:
-            if(experimental): # Enable experimental partial logging
-                try:
-                    add_arg = re.sub('"\s*$',"",re.sub('^\s*"',"",self.cmd.split("--args ")[1]))
-                except IndexError:
-                    add_arg = ""
-                self.cmd = 'true'
-            runCmd('cd '+self.startDir+'; rm -rf pyRelval; mkdir pyRelval; cd pyRelval; '+ self.cmd + ' 2>&1 > runall.log')
-            if(experimental): # Enable experimental partial logging
-                pyrelval.startWorkflows(self.logger, add_arg)
-        except Exception, e :
-            print "runTests> ERROR during test PyReleaseValidation : caught exception: " + str(e)
-            pass
-        try:
-            runCmd("cd " + self.startDir + "/pyRelval ; zip -r pyRelValMatrixLogs.zip `find . -mindepth 2 -maxdepth 2 -name '*.log' -o -name '*.xml' -o -name 'cmdLog' -type f | sed -e 's|^./||'`")
-            self.logger.updateRelValMatrixLogs()
+            add_arg = re.sub('"\s*$',"",re.sub('^\s*"',"",self.cmd.split("--args ")[1]))
+            runCmd('cd '+self.startDir+'; rm -rf pyRelval; mkdir pyRelval')
+            pyrelval.startWorkflows(self.logger, add_arg)
         except Exception, e :
             print "runTests> ERROR during test PyReleaseValidation : caught exception: " + str(e)
             pass
