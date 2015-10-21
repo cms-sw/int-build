@@ -53,10 +53,12 @@ def runThreadMatrix(basedir, logger, workflow, args=''):
   return
 
 class PyRelValsThread(object):
-  def __init__(self, jobs, basedir, jobid="1of1"):
+  def __init__(self, jobs, basedir, jobid="1of1", outdir=None):
+    if not outdir: outdir = basedir
     self.jobs = jobs
     self.basedir = basedir
     self.jobid=jobid
+    self.outdir = outdir
 
   def startWorkflows(self, logger, add_args='', workflows=''):
     from commands import getstatusoutput
@@ -96,7 +98,7 @@ class PyRelValsThread(object):
     return
 
   def update_runall(self):
-    outFile    = open(os.path.join(self.basedir,"runall-report-step123-.log"),"w")
+    outFile    = open(os.path.join(self.outdir,"runall-report-step123-.log"),"w")
     status_ok  = []
     status_err = []
     len_ok  = 0
@@ -140,7 +142,7 @@ class PyRelValsThread(object):
         if m: time_info[wf]=int(m.group(1))
       except:
         pass
-    outFile = open(os.path.join(self.basedir,"relval-times.json"),"w")
+    outFile = open(os.path.join(self.outdir,"relval-times.json"),"w")
     import json
     json.dump(time_info, outFile)
     outFile.close()
@@ -182,7 +184,7 @@ class PyRelValsThread(object):
       del logData[wf]['steps']
 
     from pickle import Pickler
-    outFile = open(os.path.join(self.basedir,'runTheMatrixMsgs.pkl'), 'w')
+    outFile = open(os.path.join(self.outdir,'runTheMatrixMsgs.pkl'), 'w')
     pklFile = Pickler(outFile)
     pklFile.dump(logData)
     outFile.close()
