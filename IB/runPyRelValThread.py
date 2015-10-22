@@ -64,6 +64,11 @@ class PyRelValsThread(object):
     from commands import getstatusoutput
     add_args = add_args.replace('\\"','"')
     print "Extra Args>>",add_args
+    if workflows == '':
+      m=re.search('\s*(-l\s+\d+[^ ]+)',add_args)
+      if m: workflows = m.group(1)
+      m=re.search('\s*(-w\s+[^ ]+)',add_args)
+      if m: workflows = workflow + " "+ m.group(1)
     workflowsCmd = "runTheMatrix.py -n "+workflows+" | grep -E '^[0-9].*\.[0-9][0-9]?' | sort -nr | awk '{print $1}'"
     print "RunTheMatrix>>",workflowsCmd
     cmsstat, workflows = getstatusoutput(workflowsCmd)
