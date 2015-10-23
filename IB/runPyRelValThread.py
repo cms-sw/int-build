@@ -74,7 +74,7 @@ class PyRelValsThread(object):
       if m:
         workflows = m.group(1)
         add_args = add_args.replace(workflows,"")
-    workflowsCmd = "runTheMatrix.py -n "+w_arg+" "+workflows+" |  grep -v '[1-9][0-9]*\s*workflows with ' | grep -E '^[0-9][0-9]*(\.[0-9][0-9]*|)\s\s*' | sort -nr | awk '{print $1}'"
+    workflowsCmd = "runTheMatrix.py -n "+w_arg+" "+workflows+" |  grep -v ' workflows with ' | grep -E '^[0-9][0-9]*(\.[0-9][0-9]*|)\s\s*' | sort -nr | awk '{print $1}'"
     print "RunTheMatrix>>",workflowsCmd
     cmsstat, workflows = getstatusoutput(workflowsCmd)
     print workflows
