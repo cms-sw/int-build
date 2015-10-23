@@ -446,20 +446,13 @@ class CodeRulesChecker(IBThreadBase):
     def run(self):
         IBThreadBase.run(self)
         try:
-            script = 'cd '+self.startDir+'; cmsCodeRulesChecker.py'
-	    if not os.path.exists(script) :
-                print ' ... no cmsCodeRulesChecker.py in release, checks not run ... '
-                return
-            
-            print ' ... using cmsCodeRulesChecker.py from release ...'
             cmd  = 'cd '+ self.startDir +'; rm -rf  codeRules; mkdir codeRules; cd codeRules; '
-	    cmd += script+' -d ../src -S . -html 2>&1 >CodeRulesChecker.log '
+	    cmd += 'cmsCodeRulesChecker.py -d ../src -S . -html 2>&1 >CodeRulesChecker.log '
             print 'CodeRulesChecker: in: ', os.getcwd()
             print ' ... going to execute:',cmd
             ret = runCmd(cmd)
             if ret != 0:
                 print "ERROR when running CodeRulesChecker: cmd returned " + str(ret)
-
         except Exception, e :
             print "ERROR during runtests : caught exception: " + str(e)
             print "      cmd as of now   : '" + cmd + "'"
