@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-import os, sys, glob, re, shutil, time, threading
+import os, sys, glob, re, shutil, time, threading, json
 
 def doCmd(cmd, dryRun=False, inDir=None):
     if not inDir:
@@ -146,7 +146,6 @@ class PyRelValsThread(object):
       except:
         pass
     outFile = open(os.path.join(self.outdir,"relval-times.json"),"w")
-    import json
     json.dump(time_info, outFile)
     outFile.close()
 
