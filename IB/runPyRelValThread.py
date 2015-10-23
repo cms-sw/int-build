@@ -164,6 +164,8 @@ class PyRelValsThread(object):
         logData[wf] = {'steps': {}, 'events' : [], 'failed' : [], 'warning' : []}
       if not logData[wf]['steps'].has_key(step):
         logData[wf]['steps'][step]=logFile
+    cache_read=0
+    log_processed=0
     for wf in logData:
       for k in logData[wf]:
         if k == 'steps': continue
@@ -171,21 +173,33 @@ class PyRelValsThread(object):
           logData[wf][k].append(-1)
       index =0
       for step in sorted(logData[wf]['steps']):
-        warn = 0
-        err = 0
-        rd = 0
-        inFile = open(logData[wf]['steps'][step])
-        for line in inFile:
-          if '%MSG-w' in line: warn += 1
-          if '%MSG-e' in line: err += 1
-          if 'Begin processing the ' in line: rd += 1
-        inFile.close()
-        logData[wf]['events'][index] = rd
-        logData[wf]['failed'][index] = err
-        logData[wf]['warning'][index] = warn
+        data = [0, 0, 0]
+        logFile = logData[wf]['steps'][step]
+        json_cache = os.path.dirname(logFile)+"/logcache_"+str(step)+".json"
+        if (not os.path.exists(json_cache)) or (os.path.getmtime(logFile)>os.path.getmtime(json_cache)):
+          inFile = open(logFile)
+          for line in inFile:
+            if '%MSG-w' in line: data[1]=data[1]+1
+            if '%MSG-e' in line: data[2]=data[2]+1
+            if 'Begin processing the ' in line: data[0]=data[0]+1
+          inFile.close()
+          jfile = open(json_cache,"w")
+          json.dump(data,jfile)
+          jfile.close()
+          log_processed+=1
+        else:
+          jfile = open(json_cache,"r")
+          data = json.load(jfile)
+          jfile.close()
+          cache_read+=1
+        logData[wf]['events'][index] = data[0]
+        logData[wf]['failed'][index] = data[2]
+        logData[wf]['warning'][index] = data[1]
         index+=1
       del logData[wf]['steps']
 
+    print "Log processed: ",log_processed
+    print "Caches read:",cache_read
     from pickle import Pickler
     outFile = open(os.path.join(self.outdir,'runTheMatrixMsgs.pkl'), 'w')
     pklFile = Pickler(outFile)
