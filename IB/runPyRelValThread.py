@@ -64,12 +64,17 @@ class PyRelValsThread(object):
     from commands import getstatusoutput
     add_args = add_args.replace('\\"','"')
     print "Extra Args>>",add_args
+    w_args = ""
+    m=re.search('\s*(-w\s+[^ ]+)',add_args)
+    if m:
+      w_arg = m.group(1)
+      add_args = add_args.replace(w_arg,"")
     if workflows == '':
       m=re.search('\s*(-l\s+\d+[^ ]+)',add_args)
-      if m: workflows = m.group(1)
-      m=re.search('\s*(-w\s+[^ ]+)',add_args)
-      if m: workflows = workflows + " "+ m.group(1)
-    workflowsCmd = "runTheMatrix.py -n "+workflows+" | grep -E '^[0-9].*\.[0-9][0-9]?' | sort -nr | awk '{print $1}'"
+      if m:
+        workflows = m.group(1)
+        add_args = add_args.replace(workflows,"")
+    workflowsCmd = "runTheMatrix.py -n "+w_arg+" "+workflows+" |  grep -v '[1-9][0-9]*\s*workflows with ' | grep -E '^[0-9][0-9]*(\.[0-9][0-9]*|)\s\s*' | sort -nr | awk '{print $1}'"
     print "RunTheMatrix>>",workflowsCmd
     cmsstat, workflows = getstatusoutput(workflowsCmd)
     print workflows
@@ -88,7 +93,7 @@ class PyRelValsThread(object):
       print "Active Threads:",len(threads)
       if(len(threads) < jobs):
         try:
-          t = threading.Thread(target=runThreadMatrix, args=(self.basedir, logger, workflows.pop(), add_args))
+          t = threading.Thread(target=runThreadMatrix, args=(self.basedir, logger, workflows.pop(), w_args+" "+add_args))
           t.start()
           threads.append(t)
         except Exception, e:
