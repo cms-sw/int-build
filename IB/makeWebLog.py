@@ -53,18 +53,18 @@ class WebLogger(BuilderBase):
         self.relDir = os.path.join( self.topDir, self.day, candIn, rel)
         self.webDir = os.path.join(self.topDir, 'www', self.day, candIn, rel)
         self.tcTag = tcTag
-        if not self.doInstall: return
-        if not os.path.exists(self.webDir) and not self.dryRun:
-            print "Preparing web log for rel ",rel, 'candIn', candIn, 'tctag', tcTag
-            print '          in ', self.topDir, 'day', self.day
-            os.makedirs(self.webDir)
+        #if not self.doInstall: return
+        #if not os.path.exists(self.webDir) and not self.dryRun:
+        #    print "Preparing web log for rel ",rel, 'candIn', candIn, 'tctag', tcTag
+        #    print '          in ', self.topDir, 'day', self.day
+        #    os.makedirs(self.webDir)
 
         return
     
     # --------------------------------------------------------------------------------
 
     def createWebLog(self):
-
+        return
         if not self.doInstall: return
         try:
             cmd = 'cd '+self.webDir + ';'
