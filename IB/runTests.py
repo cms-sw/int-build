@@ -205,7 +205,7 @@ class DQMRefReports(IBThreadBase):
     def run(self):
         IBThreadBase.run(self)
         try:
-            runCmd("mkdir -p "+self.logger.webTargetDir+"/pyRelValMatrixLogs/run ;"+self.cmd)
+            runCmd(self.cmd)
         except Exception, e :
             print "DQMRefReport> ERROR during test DQMRefReport : caught exception: " + str(e)
             pass
